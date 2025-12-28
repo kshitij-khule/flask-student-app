@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Student App</title>
+</head>
+
+<body>
+  <h2>Add Student</h2>
+
+  <input id="name" placeholder="Name" />
+  <input id="marks" placeholder="Marks" type="number" />
+  <button onclick="addStudent()">Add</button>
+
+  <h3>Students</h3>
+  <pre id="output"></pre>
+
+  <script>
+    function addStudent() {
+      const name = document.getElementById("name").value;
+      const marks = document.getElementById("marks").value;
+
+      fetch("http://127.0.0.1:5000/students", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: name,
+          marks: marks
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          loadStudents();
+        });
+    }
+
+    function loadStudents() {
+      fetch("http://127.0.0.1:5000/students")
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("output").innerText =
+            JSON.stringify(data, null, 2);
+        });
+    }
+
+    loadStudents();
+  </script>
+</body>
+
+</html>
