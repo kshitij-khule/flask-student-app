@@ -20,7 +20,7 @@
       const name = document.getElementById("name").value;
       const marks = document.getElementById("marks").value;
 
-      fetch("http://127.0.0.1:5000/students", {
+      fetch("http://13.50.100.72:5000/students", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -37,7 +37,7 @@
     }
 
     function loadStudents() {
-      fetch("http://127.0.0.1:5000/students")
+      fetch("http://13.50.100.72:5000/students")
         .then(res => res.json())
         .then(data => {
           document.getElementById("output").innerText =
