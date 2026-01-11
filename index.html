@@ -20,7 +20,7 @@
       const name = document.getElementById("name").value;
       const marks = document.getElementById("marks").value;
 
-      fetch("flask-mini-backend-763233860.eu-north-1.elb.amazonaws.com/students", {
+      fetch("http://flask-mini-backend-763233860.eu-north-1.elb.amazonaws.com/students", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -37,7 +37,7 @@
     }
 
     function loadStudents() {
-      fetch("flask-mini-backend-763233860.eu-north-1.elb.amazonaws.com/students")
+      fetch("http:flask-mini-backend-763233860.eu-north-1.elb.amazonaws.com/students")
         .then(res => res.json())
         .then(data => {
           document.getElementById("output").innerText =
