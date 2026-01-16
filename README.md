@@ -131,7 +131,7 @@ Detailed guide: See comments in code files
 - ALB: ~$4 (pro-rated)
 - **Total: ~$4.50**
 
-⚠️ ALB is expensive for learning - deleted after project!
+⚠️ AWS resources were created temporarily for learning and later deleted.
 
 ---
 
