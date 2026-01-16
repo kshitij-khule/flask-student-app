@@ -3,17 +3,79 @@
 
 <head>
   <title>Student Application</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 25px 30px;
+      border-radius: 10px;
+      width: 350px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2, h3 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #4338ca;
+    }
+
+    pre {
+      background: #f1f5f9;
+      padding: 12px;
+      border-radius: 6px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+  </style>
 </head>
 
 <body>
-  <h2>Add Student</h2>
 
-  <input id="name" placeholder="Name" />
-  <input id="marks" placeholder="Marks" type="number" />
-  <button onclick="addStudent()">Add</button>
+  <div class="container">
+    <h2>Add Student</h2>
 
-  <h3>Students</h3>
-  <pre id="output"></pre>
+    <input id="name" placeholder="Name" />
+    <input id="marks" placeholder="Marks" type="number" />
+    <button onclick="addStudent()">Add</button>
+
+    <h3>Students</h3>
+    <pre id="output"></pre>
+  </div>
 
   <script>
     function addStudent() {
@@ -47,6 +109,6 @@
 
     loadStudents();
   </script>
-</body>
 
+</body>
 </html>
