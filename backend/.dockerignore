@@ -44,3 +44,6 @@ frontend/
 *.html
 screenshots/
 README.md
+
+# Database files — these live outside the container via volumes
+data/

@@ -38,6 +38,9 @@ COPY --from=builder /install /usr/local
 # Copy application source code
 COPY . .
 
+# Create the data directory for SQLite
+RUN mkdir -p /app/data
+
 # Give ownership to non-root user
 RUN chown -R appuser:appgroup /app
 
