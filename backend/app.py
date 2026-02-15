@@ -5,6 +5,7 @@ client → HTTP → Flask → API → data → response
 v2: Replaced in-memory list with SQLite database (raw SQL)
 """
 import sqlite3
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -14,7 +15,7 @@ CORS(app)
 # --- Database setup ---
 # This is the path to the SQLite file
 # SQLite is just a single .db file sitting on disk — no server needed
-DATABASE = "data/students.db"
+DATABASE = os.environ.get("DATABASE_PATH", "data/students.db")
 
 
 def get_db():
