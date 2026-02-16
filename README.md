@@ -1,180 +1,210 @@
-# 🎓 Student Management System - AWS Cloud Deployment
+# 🎓 Student Management System
 
-> My first cloud deployment project: Learning AWS services, CORS, security groups, and production architecture by deploying a full-stack application.
+A full-stack student management API built to learn real-world backend and DevOps practices — from a basic Flask app to a containerised, CI/CD-deployed cloud application.
 
-![Application Demo](screenshots/working-app.png)
-
+[![Flask](https://img.shields.io/badge/Flask-3.1-blue?logo=flask)](https://flask.palletsprojects.com/)
+[![Docker](https://img.shields.io/badge/Docker-Containerised-2496ED?logo=docker)](https://www.docker.com/)
 [![AWS](https://img.shields.io/badge/AWS-EC2%20%7C%20S3%20%7C%20ALB-orange?logo=amazon-aws)](https://aws.amazon.com/)
-[![Flask](https://img.shields.io/badge/Flask-Backend-blue?logo=flask)](https://flask.palletsprojects.com/)
+[![Python](https://img.shields.io/badge/Python-3.11-green?logo=python)](https://www.python.org/)
 
 ---
 
 ## 🎯 About
 
-This is a **learning project** focused on understanding cloud deployment, not application development. The code is simple (AI-assisted), but the real learning came from:
+This project started as a simple Flask app deployed manually on EC2. It's being progressively rebuilt to follow real engineering practices — proper project structure, containerisation with Docker, a real database, authentication, and an automated CI/CD pipeline.
 
-- Deploying to AWS from scratch
-- Debugging CORS, security groups, and networking issues  
-- Understanding how production systems work
-- Linux server management via SSH
-
-**Timeline:** 1 week (January 2026)  
-**Goal:** Hands-on AWS experience
+The goal is not just a working app, but understanding *why* each piece exists.
 
 ---
 
 ## 🏗️ Architecture
+
 ```
-User → S3 (Frontend) → ALB (Load Balancer) → EC2 (Flask API)
+User → S3 (Frontend) → ALB (Load Balancer) → EC2 (Docker Container → Flask API → PostgreSQL)
 ```
 
-**Services Used:**
-- AWS EC2 (t2.micro) - Backend hosting
-- AWS S3 - Static website hosting
-- AWS ALB - Load balancing
-- Security Groups - Network security
+**Current State:**
+```
+Browser → Flask API (Docker) → SQLite
+```
 
-![Architecture](screenshots/architecture-diagram.png)
+**Target State:**
+```
+Browser → S3 (HTML/JS) → ALB → EC2 (Docker) → Flask API → PostgreSQL (Docker)
+                                                    ↑
+                                             GitHub Actions CI/CD
+```
 
 ---
 
 ## 🛠️ Tech Stack
 
-**Frontend:** HTML, JavaScript  
-**Backend:** Python, Flask, Flask-CORS  
-**Cloud:** AWS (EC2, S3, ALB, VPC, Security Groups)  
-**Tools:** Git, SSH, MobaXterm
+| Layer | Technology |
+|---|---|
+| Backend | Python, Flask, Flask-CORS |
+| Database | SQLite (dev) → PostgreSQL (prod) |
+| Auth | JWT (in progress) |
+| Containerisation | Docker, Docker Compose |
+| CI/CD | GitHub Actions |
+| Cloud | AWS EC2, S3, ALB, Security Groups |
 
 ---
 
-## 🧠 What I Learned
+## 📁 Project Structure
 
-### AWS Hands-On
-- Launched and configured EC2 instances
-- Set up S3 static website hosting
-- Configured Application Load Balancer with target groups
-- Managed Security Groups and network access
-
-### Key Debugging Wins
-- **CORS Configuration:** Learned why cross-origin requests need explicit permission
-- **Security Groups:** Fixed "Target Unhealthy" by allowing ALB → EC2 traffic
-- **URL Typo:** Missing `http://` made browser use relative URL (got 404 instead of JSON)
-- **Systematic Debugging:** Checked each layer (app → EC2 → security groups)
-
-### Production Concepts
-- Difference between static hosting (S3) and compute (EC2)
-- How load balancers route traffic and check health
-- Linux server management and SSH access
-- Git version control and Python virtual environments
-
----
-
-## 🐛 Main Challenges
-
-**1. Missing Protocol in URL**
-```javascript
-// ❌ Wrong - Browser treats as relative URL
-fetch("alb-dns.com/students")
-
-// ✅ Fixed - Always use full URL
-fetch("http://alb-dns.com/students")
+```
+flask-playground/
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py        # App factory — creates and configures Flask app
+│   │   ├── config.py          # All configuration and environment variables
+│   │   ├── routes/
+│   │   │   ├── __init__.py
+│   │   │   └── students.py    # /students endpoints
+│   │   └── models/
+│   │       └── __init__.py    # Database models (PostgreSQL coming soon)
+│   ├── run.py                 # Entry point
+│   ├── requirements.txt
+│   ├── Dockerfile
+│   └── .dockerignore
+├── frontend/
+│   └── index.html
+├── docker-compose.yml         # coming soon
+├── .github/
+│   └── workflows/
+│       └── ci.yml             # coming soon
+├── .gitignore
+└── README.md
 ```
 
-**2. Security Group Misconfiguration**
-- ALB couldn't reach EC2 - target showed "unhealthy"
-- Fixed by allowing port 5000 from ALB security group
-
-**3. CORS Errors**
-- Browser blocked cross-origin requests
-- Fixed with `Flask-CORS` library
-
 ---
 
-## 🚀 Quick Setup
+## 🚀 Running Locally
 
-**Backend (EC2):**
+### With Docker (recommended)
+
 ```bash
-ssh -i key.pem ec2-user@<ec2-ip>
-sudo yum update -y
-sudo yum install python3 git -y
-git clone <repo-url>
+# Clone the repo
+git clone https://github.com/kshitij-khule/flask-playground.git
+cd flask-playground/backend
+
+# Create data directory and set permissions
+mkdir -p data
+chmod 777 data
+
+# Create .env file
+cp .env.example .env
+
+# Build and run
+docker build -t student-app .
+docker run -p 5000:5000 -v $(pwd)/data:/app/data --env-file .env student-app
+```
+
+### Without Docker
+
+```bash
 cd backend
 python3 -m venv venv
-source venv/bin/activate
+source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-python3 app.py
+python run.py
 ```
 
-**Frontend (S3):**
-- Create bucket, enable static hosting
-- Upload `index.html`
-- Make bucket public
-- Update ALB DNS in JavaScript
+### Test the API
 
-Detailed guide: See comments in code files
+```bash
+# Health check
+curl http://localhost:5000/
 
----
+# Add a student
+curl -X POST http://localhost:5000/students/ \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Kshitij", "age": 21}'
 
-## 📸 Screenshots
-
-| EC2 Dashboard | ALB Configuration | Working App |
-|---------------|-------------------|-------------|
-| ![EC2](screenshots/ec2-dashboard.png) | ![ALB](screenshots/alb-setup.png) | ![App](screenshots/working-app.png) |
-
----
-
-## 💰 Cost
-
-**1 Week Usage:**
-- EC2 t2.micro: $0 (free tier)
-- S3: ~$0.02
-- ALB: ~$4 (pro-rated)
-- **Total: ~$4.50**
-
-⚠️ AWS resources were created temporarily for learning and later deleted.
+# Get all students
+curl http://localhost:5000/students/
+```
 
 ---
 
-## 🔒 Security Notes
+## 🔌 API Endpoints
 
-**This is a learning project with limitations:**
-- No HTTPS (HTTP only)
-- No authentication
-- In-memory storage
-- No input validation
-
-**For production, add:** Database (RDS), HTTPS (ACM), authentication, monitoring, etc.
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/` | Health check |
+| GET | `/students/` | Get all students |
+| POST | `/students/` | Add a new student |
 
 ---
 
-## 📈 Next Steps
+## ⚙️ Environment Variables
 
-- [ ] Build CI/CD pipeline with GitHub Actions
-- [ ] Add Terraform for Infrastructure as Code
-- [ ] Implement proper database (RDS)
-- [ ] Add monitoring with CloudWatch
-- [ ] Deploy with Docker + ECS
+Create a `.env` file in the `backend/` directory:
+
+```env
+DATABASE_PATH=data/students.db
+SECRET_KEY=your-secret-key-here
+ALLOWED_ORIGINS=http://localhost:5500
+```
+
+> `.env` is in `.gitignore` and `.dockerignore` — never committed to the repo.
+
+---
+
+## 🧠 Key Concepts Learned
+
+### V1 — Manual AWS Deployment
+- Launched EC2, configured security groups, set up ALB
+- Debugged CORS errors and unhealthy ALB targets
+- Understood the difference between static hosting (S3) and compute (EC2)
+
+### V2 — Docker + Proper Project Structure (current)
+- Containerised the Flask app with a multi-stage Dockerfile
+- Replaced in-memory storage with a persistent SQLite database
+- Used Docker volumes to persist data outside the container
+- Restructured project using Flask Blueprints and app factory pattern
+- Separated concerns: routes, models, config each have their own place
+
+### Coming Next
+- Docker Compose to run Flask + PostgreSQL as a multi-container app
+- JWT authentication (register/login endpoints)
+- GitHub Actions CI/CD — auto build and deploy on every push to main
+
+---
+
+## 📈 Roadmap
+
+- [x] Deploy Flask app on EC2 manually
+- [x] Set up ALB + S3 frontend
+- [x] Dockerise the backend
+- [x] Add SQLite database with persistent volume
+- [x] Restructure with Blueprints and app factory
+- [ ] Docker Compose + PostgreSQL
+- [ ] JWT Authentication
+- [ ] GitHub Actions CI/CD pipeline
+- [ ] Redeploy to AWS with Docker
+
+---
+
+## 💰 AWS Cost (V1)
+
+| Service | Cost |
+|---|---|
+| EC2 t2.micro | $0 (free tier) |
+| S3 | ~$0.02 |
+| ALB | ~$4 (pro-rated) |
+| **Total** | **~$4.50 / week** |
+
+> AWS resources were taken down after V1 to avoid ongoing charges. Will be recreated for final deployment.
 
 ---
 
 ## 🙏 Resources
 
-- [AWS Zero to Hero - Abhishek Veeramalla](https://youtube.com/@AbhishekVeeramalla)
-- [AWS Documentation](https://docs.aws.amazon.com/)
-- [Flask Docs](https://flask.palletsprojects.com/)
-
----
-
-## 📝 License
-
-MIT License - Feel free to use for learning!
+- [AWS Zero to Hero — Abhishek Veeramalla](https://youtube.com/@AbhishekVeeramalla)
+- [Flask Documentation](https://flask.palletsprojects.com/)
+- [Docker Documentation](https://docs.docker.com/)
 
 ---
 
 **Built by Kshitij Khule** | [GitHub](https://github.com/kshitij-khule) | [LinkedIn](https://www.linkedin.com/in/kshitijkhule/)
-
----
-
-⭐ **If this helped you understand AWS deployment, give it a star!**
-
-*Note: Application code is AI-assisted. Focus is on cloud infrastructure and deployment concepts.*
