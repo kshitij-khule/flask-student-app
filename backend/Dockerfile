@@ -51,4 +51,4 @@ EXPOSE 5000
 # Use Gunicorn for production (more robust than Flask's dev server)
 # Format: gunicorn <module>:<flask_app_variable>
 # Assumes your file is app.py and Flask instance is named `app` — adjust if different
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "60", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "60", "run:app"]
