@@ -8,3 +8,6 @@ MarkupSafe==3.0.3
 Werkzeug==3.1.4
 gunicorn
 psycopg2-binary
+PyJWT #used to create and verify tokens
+bcrypt # used for password hashing , Hash is a oneway function 
+# so password(register)-> hashed , password(login )->hashed and than match hashed passwords , never plain
