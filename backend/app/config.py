@@ -2,7 +2,7 @@ import os
 
 class Config:
     # No fallback — app must be given a DATABASE_URL explicitly
-    DATABASE_URL = os.environ.get("DATABASE_URL")
+    DATABASE_URL = os.environ.get("DATABASE_URL","postgresql://admin:password@postgres:5432/studentsdb")
     if not DATABASE_URL:
         raise Exception("DATABASE_URL environment variable is not set!")
 
