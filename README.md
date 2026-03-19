@@ -131,7 +131,7 @@ curl http://localhost:5000/students/
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/` | Health check |
+| GET | `/` | Health check |c
 | GET | `/students/` | Get all students |
 | POST | `/students/` | Add a new student |
 
